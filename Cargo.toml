@@ -1,5 +1,5 @@
 [package]
-name = "RustRevEngine"
+name = "rust_rev_engine"
 version = "0.1.0"
 authors = ["Joakim <Joxxor@gmail.com>"]
 edition = "2018"

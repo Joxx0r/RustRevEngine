@@ -1,4 +1,3 @@
-
 /** REQUIRED FOR WINDOWS BUILD START*/
 extern crate shell32;
 /** REQUIRED FOR WINDOWS BUILD END*/
@@ -8,58 +7,10 @@ use self::glfw::{Context, Key, Action};
 
 extern crate gl;
 
+mod types;
+use crate::types::RevColor;
+
 use std::sync::mpsc::Receiver;
-
-pub struct RevColor
-{
-    r : f32,
-    g : f32,
-    b : f32,
-    a : f32,
-}
-
-impl RevColor
-{
-    fn new(r:f32, g:f32, b:f32, a:f32) -> RevColor
-    {
-        RevColor{r:r, g:g, b:b, a:a}
-    }
-}
-
-enum RevColorTypes
-{
-    Red(RevColor),
-    Blue(RevColor),
-}
-
-// settings
-pub struct StartupSettings {
-    WindowWidth: u32,
-    WindowHeight: u32,
-    title : String,
-
-}
-
-fn create_startup_settings() -> StartupSettings {
-    let f = StartupSettings{
-        WindowWidth: 1024,
-        WindowHeight: 720,
-        title: String::from("RevEngine"),
-    };
-    f
-}
-
-fn REV_RED_COLOR() -> RevColor {
-    RevColor::new(1.0, 0.0, 0.0, 1.0)
-}
-
-fn REV_WHITE_COLOR() -> RevColor {
-    RevColor::new(1.0, 1.0, 1.0, 1.0)
-}
-
-fn REV_BLACK_COLOR() -> RevColor {
-    RevColor::new(0.0, 0.0, 0.0, 1.0)
-}
 
 fn clear_color_gl(color:RevColor)
 {
@@ -70,7 +21,7 @@ fn clear_color_gl(color:RevColor)
 }
 fn main() 
 {
-    let startup_settings = create_startup_settings();
+    let startup_settings = types::create_startup_settings(1024, 720);
     let mut glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
     glfw.window_hint(glfw::WindowHint::ContextVersion(3, 3));
     glfw.window_hint(glfw::WindowHint::OpenGlProfile(glfw::OpenGlProfileHint::Core));
@@ -78,8 +29,8 @@ fn main()
     glfw.window_hint(glfw::WindowHint::OpenGlForwardCompat(true));
 
     let (mut window, events) = glfw.create_window(
-        startup_settings.WindowWidth,
-        startup_settings.WindowHeight, 
+        startup_settings.window_width,
+        startup_settings.window_height, 
         startup_settings.title.as_str(), 
         glfw::WindowMode::Windowed)
         .expect("Failed to create GLFW window");
@@ -95,7 +46,7 @@ fn main()
 
         process_events(&mut window, &events);
         unsafe {
-            clear_color_gl(REV_BLACK_COLOR());
+            clear_color_gl(RevColor::black());
             gl::Clear(gl::COLOR_BUFFER_BIT);
         }
         window.swap_buffers();
