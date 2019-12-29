@@ -1,5 +1,5 @@
 
-const VERTEX_SHADER_SOURCE: &str = r#"
+pub const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330 core
     layout (location = 0) in vec3 aPos;
     void main() {
@@ -7,7 +7,7 @@ const VERTEX_SHADER_SOURCE: &str = r#"
     }
 "#;
 
-const FRAGMENT_SHADER_SOURCE: &str = r#"
+pub const FRAGMENT_SHADER_SOURCE: &str = r#"
     #version 330 core
     out vec4 FragColor;
     void main() {
