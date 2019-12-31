@@ -2,22 +2,6 @@
 use std::error::Error;
 use std::fmt;
 
-pub const VERTEX_SHADER_SOURCE: &str = r#"
-    #version 330 core
-    layout (location = 0) in vec3 aPos;
-    void main() {
-       gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-    }
-"#;
-
-pub const FRAGMENT_SHADER_SOURCE: &str = r#"
-    #version 330 core
-    out vec4 FragColor;
-    void main() {
-       FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-    }
-"#;
-
 pub struct RevColor
 {
     pub r : f32,
@@ -26,6 +10,7 @@ pub struct RevColor
     pub a : f32,
 }
 
+#[allow(dead_code)]
 impl RevColor
 {
     fn new(r:f32, g:f32, b:f32, a:f32) -> RevColor
@@ -72,6 +57,7 @@ pub struct RevError
 
 impl RevError 
 {
+    #[allow(dead_code)]
     pub fn new(name:&str) -> RevError {
         RevError{ display: String::from(name)}
     }

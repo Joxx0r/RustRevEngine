@@ -2,7 +2,6 @@
 use std::io;
 use std::io::Read;
 use std::fs::File;
-use std::io::ErrorKind;
 
 pub fn read_username_from_file(path:&str) -> Result<String, io::Error> 
 {

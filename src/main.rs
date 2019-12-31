@@ -15,9 +15,7 @@ use self::gl::types::*;
 /** STD */
 /** START */
 use std::sync::mpsc::Receiver;
-use std::ffi::CString;
 use std::ptr;
-use std::str;
 use std::mem;
 use std::os::raw::c_void;
 /** END */
@@ -28,6 +26,7 @@ use std::os::raw::c_void;
 /** START MODULES */
 mod types;
 mod utils;
+mod rc;
 /** END MODULES*/
 
 /** START TYPES USE*/
@@ -37,14 +36,6 @@ use crate::shader::Shader;
 /** END TYPES USE*/
 /** INTERNAL*/
 
-
-fn clear_color_gl(color:RevColor)
-{
-    unsafe
-    {
-        gl::ClearColor(color.r, color.g, color.b, color.a);
-    }
-}
 fn main() 
 {
     let startup_settings = types::create_startup_settings(1024, 720);
@@ -64,79 +55,69 @@ fn main()
     window.make_current();
     window.set_key_polling(true);
     window.set_framebuffer_size_polling(true);
-
  
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
-    let (ourShader, vao) = unsafe {
-        let ourShader = Shader::new(
+    let (our_shader, vao) = unsafe {
+        let our_shader = Shader::new(
             "../../resources/shaders/shader.vs",
             "../../resources/shaders/shader.fs",
-        ); 
+        ).unwrap_or_else(|error|{
+            panic!("Failed serializing shader {}", error);
+        }); 
         
-         // set up vertex data (and buffer(s)) and configure vertex attributes
-        // ------------------------------------------------------------------
-        // HINT: type annotation is crucial since default for float literals is f64
-        let vertices: [f32; 18] = [
-            // positions         // colors
-            0.5, -0.5, 0.0,  1.0, 0.0, 0.0,  // bottom right
-           -0.5, -0.5, 0.0,  0.0, 1.0, 0.0,  // bottom left
-            0.0,  0.5, 0.0,  0.0, 0.0, 1.0   // top
-        ];
-        let (mut VBO, mut VAO) = (0, 0);
-        gl::GenVertexArrays(1, &mut VAO);
-        gl::GenBuffers(1, &mut VBO);
-        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-        gl::BindVertexArray(VAO);
 
-        gl::BindBuffer(gl::ARRAY_BUFFER, VBO);
+        let vertices: [f32; 18] = [
+            0.5, -0.5, 0.0,  1.0, 0.0, 0.0, 
+           -0.5, -0.5, 0.0,  0.0, 1.0, 0.0,  
+            0.0,  0.5, 0.0,  0.0, 0.0, 1.0   
+        ];
+        let (mut vbo, mut vao) = (0, 0);
+        gl::GenVertexArrays(1, &mut vao);
+        gl::GenBuffers(1, &mut vbo);
+       
+        gl::BindVertexArray(vao);
+
+        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
         gl::BufferData(gl::ARRAY_BUFFER,
                        (vertices.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
                        &vertices[0] as *const f32 as *const c_void,
                        gl::STATIC_DRAW);
 
         let stride = 6 * mem::size_of::<GLfloat>() as GLsizei;
-        // position attribute
+
+
         gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, stride, ptr::null());
         gl::EnableVertexAttribArray(0);
-        // color attribute
+
         gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, stride, (3 * mem::size_of::<GLfloat>()) as *const c_void);
         gl::EnableVertexAttribArray(1);
 
-        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-        // gl::BindVertexArray(0);
 
-        (ourShader, VAO)
+        (our_shader, vao)
 
     };
 
-    println!("reached here");
      while !window.should_close() {
-        // events
-        // -----
+
         process_events(&mut window, &events);
 
-        // render
-        // ------
+   
         unsafe {
-            gl::ClearColor(0.2, 0.3, 0.3, 1.0);
+            rc::clear_color_gl(RevColor::black());
             gl::Clear(gl::COLOR_BUFFER_BIT);
 
             // render the triangle
-            ourShader.useProgram();
+            our_shader.useProgram();
             gl::BindVertexArray(vao);
             gl::DrawArrays(gl::TRIANGLES, 0, 3);
         }
 
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-        // -------------------------------------------------------------------------------
         window.swap_buffers();
         glfw.poll_events();
     }
 }
 
-// NOTE: not the same version as in common.rs!
 fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::WindowEvent)>) 
 {
     for (_, event) in glfw::flush_messages(events) 

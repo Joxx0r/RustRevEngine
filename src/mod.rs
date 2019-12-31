@@ -4,3 +4,5 @@ mod shader;
 pub use self::shader::Shader;
 mod utils;
 pub use self::utils::*;
+mod glCommands;
+pub use self::glCommands::*;

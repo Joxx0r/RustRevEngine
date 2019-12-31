@@ -1,19 +1,12 @@
 #![allow(non_snake_case)]
-use std::ffi::{CString, CStr};
-use std::fs::File;
-use std::io::Read;
+use std::ffi::{CString};
 use std::ptr;
 use std::str;
-
 use gl;
 use gl::types::*;
 
-use cgmath::{Matrix, Matrix4, Vector3};
-use cgmath::prelude::*;
-
 use std::error::Error;
 
-use crate::types::RevColor;
 use crate::utils;
 
 pub struct Shader {
@@ -22,12 +15,11 @@ pub struct Shader {
 
 impl Shader
 {
-    pub fn new(vertexPath:&str, fragmentPath:&str) -> Shader
+    pub fn new(vertexPath:&str, fragmentPath:&str) -> Result<Shader, Box<dyn Error>>
     {
-        let f = RevColor::red(); 
         let mut shader = Shader { ID: 0 };
-        let vertexContent = utils::read_username_from_file(vertexPath).unwrap();
-        let fragmentContent = utils::read_username_from_file(fragmentPath).unwrap();
+        let vertexContent = utils::read_username_from_file(vertexPath)?;
+        let fragmentContent = utils::read_username_from_file(fragmentPath)?;
 
         let vShaderCode = CString::new(vertexContent.as_bytes()).unwrap();
         let fShaderCode = CString::new(fragmentContent.as_bytes()).unwrap();
@@ -54,8 +46,8 @@ impl Shader
             gl::DeleteShader(fragment);
             shader.ID = ID;
         }
-
-        shader
+        
+        Ok(shader)
     }
 
     unsafe fn checkCompileErrors(&self, shader: u32, type_: &str) {
