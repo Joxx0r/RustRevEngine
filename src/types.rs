@@ -1,4 +1,7 @@
 
+use std::error::Error;
+use std::fmt;
+
 pub const VERTEX_SHADER_SOURCE: &str = r#"
     #version 330 core
     layout (location = 0) in vec3 aPos;
@@ -11,7 +14,7 @@ pub const FRAGMENT_SHADER_SOURCE: &str = r#"
     #version 330 core
     out vec4 FragColor;
     void main() {
-       FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+       FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);
     }
 "#;
 
@@ -44,6 +47,7 @@ impl RevColor
     }
 }
 
+
 // settings
 pub struct StartupSettings {
     pub window_width: u32,
@@ -58,4 +62,32 @@ pub fn create_startup_settings(width:u32, height:u32) -> StartupSettings {
         title: String::from("RevEngine"),
     };
     f
+}
+
+#[derive(Debug)]
+pub struct RevError 
+{
+    display:String,
+}
+
+impl RevError 
+{
+    pub fn new(name:&str) -> RevError {
+        RevError{ display: String::from(name)}
+    }
+}
+
+impl Error for RevError
+{
+    fn description(&self) -> &str {
+        self.display.as_str()
+    }
+}
+
+impl fmt::Display for RevError 
+{
+    fn fmt(&self, f:&mut fmt::Formatter<'_>) -> fmt::Result 
+    {
+        write!(f, "SuperErrorSideKick is here!")
+    }
 }

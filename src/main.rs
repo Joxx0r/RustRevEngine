@@ -24,11 +24,19 @@ use std::os::raw::c_void;
 /** STD*/
 
 /** INTERNAL */
-/** START */
+
+/** START MODULES */
 mod types;
+mod utils;
+/** END MODULES*/
+
+/** START TYPES USE*/
 use crate::types::RevColor;
-/** END */
+mod shader;
+use crate::shader::Shader;
+/** END TYPES USE*/
 /** INTERNAL*/
+
 
 fn clear_color_gl(color:RevColor)
 {
@@ -60,58 +68,26 @@ fn main()
  
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
-
-    let (shader_program, vao) = unsafe {
-
-        let vertex_shader = gl::CreateShader(gl::VERTEX_SHADER);
-        let c_str_vert = CString::new(types::VERTEX_SHADER_SOURCE.as_bytes()).unwrap();
-        gl::ShaderSource(vertex_shader, 1, &c_str_vert.as_ptr(), ptr::null());
-        gl::CompileShader(vertex_shader);
-
-        let mut success = gl::FALSE as GLint;
-        let mut infoLog = Vec::with_capacity(512);
-        infoLog.set_len(512 - 1); // subtract 1 to skip the trailing null character
-        gl::GetShaderiv(vertex_shader, gl::COMPILE_STATUS, &mut success);
-        if success != gl::TRUE as GLint {
-            gl::GetShaderInfoLog(vertex_shader, 512, ptr::null_mut(), infoLog.as_mut_ptr() as *mut GLchar);
-            println!("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n{}", str::from_utf8(&infoLog).unwrap());
-        }
-
-        let fragment_shader = gl::CreateShader(gl::FRAGMENT_SHADER);
-        let c_str_frag = CString::new(types::FRAGMENT_SHADER_SOURCE.as_bytes()).unwrap();
-        gl::ShaderSource(fragment_shader, 1, &c_str_frag.as_ptr(), ptr::null());
-        gl::CompileShader(fragment_shader);
-       
-        gl::GetShaderiv(fragment_shader, gl::COMPILE_STATUS, &mut success);
-        if success != gl::TRUE as GLint {
-            gl::GetShaderInfoLog(fragment_shader, 512, ptr::null_mut(), infoLog.as_mut_ptr() as *mut GLchar);
-            println!("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n{}", str::from_utf8(&infoLog).unwrap());
-        }
-
-        let shader_program = gl::CreateProgram();
-        gl::AttachShader(shader_program, vertex_shader);
-        gl::AttachShader(shader_program, fragment_shader);
-        gl::LinkProgram(shader_program);
-      
-        gl::GetProgramiv(shader_program, gl::LINK_STATUS, &mut success);
-        if success != gl::TRUE as GLint {
-            gl::GetProgramInfoLog(shader_program, 512, ptr::null_mut(), infoLog.as_mut_ptr() as *mut GLchar);
-            println!("ERROR::SHADER::PROGRAM::COMPILATION_FAILED\n{}", str::from_utf8(&infoLog).unwrap());
-        }
-        gl::DeleteShader(vertex_shader);
-        gl::DeleteShader(fragment_shader);
-
-       
-        let vertices: [f32; 9] = [
-            -0.5, -0.5, 0.0, // left
-             0.5, -0.5, 0.0, // right
-             0.0,  0.5, 0.0  // top
+    let (ourShader, vao) = unsafe {
+        let ourShader = Shader::new(
+            "../../resources/shaders/shader.vs",
+            "../../resources/shaders/shader.fs",
+        ); 
+        
+         // set up vertex data (and buffer(s)) and configure vertex attributes
+        // ------------------------------------------------------------------
+        // HINT: type annotation is crucial since default for float literals is f64
+        let vertices: [f32; 18] = [
+            // positions         // colors
+            0.5, -0.5, 0.0,  1.0, 0.0, 0.0,  // bottom right
+           -0.5, -0.5, 0.0,  0.0, 1.0, 0.0,  // bottom left
+            0.0,  0.5, 0.0,  0.0, 0.0, 1.0   // top
         ];
-        let (mut VBO, mut vao) = (0, 0);
-        gl::GenVertexArrays(1, &mut vao);
+        let (mut VBO, mut VAO) = (0, 0);
+        gl::GenVertexArrays(1, &mut VAO);
         gl::GenBuffers(1, &mut VBO);
-       
-        gl::BindVertexArray(vao);
+        // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+        gl::BindVertexArray(VAO);
 
         gl::BindBuffer(gl::ARRAY_BUFFER, VBO);
         gl::BufferData(gl::ARRAY_BUFFER,
@@ -119,27 +95,42 @@ fn main()
                        &vertices[0] as *const f32 as *const c_void,
                        gl::STATIC_DRAW);
 
-        gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 3 * mem::size_of::<GLfloat>() as GLsizei, ptr::null());
+        let stride = 6 * mem::size_of::<GLfloat>() as GLsizei;
+        // position attribute
+        gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, stride, ptr::null());
         gl::EnableVertexAttribArray(0);
+        // color attribute
+        gl::VertexAttribPointer(1, 3, gl::FLOAT, gl::FALSE, stride, (3 * mem::size_of::<GLfloat>()) as *const c_void);
+        gl::EnableVertexAttribArray(1);
 
-        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+        // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
+        // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+        // gl::BindVertexArray(0);
 
-        gl::BindVertexArray(0);
-        (shader_program, vao)
+        (ourShader, VAO)
 
     };
-    while !window.should_close() {
 
+    println!("reached here");
+     while !window.should_close() {
+        // events
+        // -----
         process_events(&mut window, &events);
+
+        // render
+        // ------
         unsafe {
-            clear_color_gl(RevColor::black());
+            gl::ClearColor(0.2, 0.3, 0.3, 1.0);
             gl::Clear(gl::COLOR_BUFFER_BIT);
 
-            gl::UseProgram(shader_program);
-            gl::BindVertexArray(vao); 
+            // render the triangle
+            ourShader.useProgram();
+            gl::BindVertexArray(vao);
             gl::DrawArrays(gl::TRIANGLES, 0, 3);
-       
         }
+
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        // -------------------------------------------------------------------------------
         window.swap_buffers();
         glfw.poll_events();
     }
