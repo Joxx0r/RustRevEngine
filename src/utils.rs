@@ -6,7 +6,7 @@ use std::io;
 use std::io::Read;
 use std::fs::File;
 
-pub fn read_username_from_file(path:&str) -> Result<String, io::Error> 
+pub fn read_content_from_file(path:&str) -> Result<String, io::Error> 
 {
     let mut f = File::open(path)?;
     let mut s = String::new();
@@ -18,7 +18,6 @@ const SRC_RESOURCE_PATH:&str = "../../resources/";
 
 pub fn read_resource_path(from_resource:&str) -> String
 {
-    println!("Serializing shader {}", String::from(from_resource));
     let mut s = String::from(SRC_RESOURCE_PATH);
     s.push_str(from_resource);
     s

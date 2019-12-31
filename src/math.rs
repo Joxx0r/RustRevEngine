@@ -1,6 +1,6 @@
+#![allow(dead_code)]
+
 use std::ops::Mul;
-
-
 
 #[derive(Debug, PartialEq)]
 pub struct Vec2

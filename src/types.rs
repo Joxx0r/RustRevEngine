@@ -2,6 +2,8 @@
 use std::error::Error;
 use std::fmt;
 
+use crate::math::*;
+
 pub struct RevColor
 {
     pub r : f32,
@@ -31,7 +33,6 @@ impl RevColor
         RevColor::new(1.0, 1.0, 1.0, 1.0)
     }
 }
-
 
 // settings
 pub struct StartupSettings {
@@ -77,3 +78,19 @@ impl fmt::Display for RevError
         write!(f, "SuperErrorSideKick is here!")
     }
 }
+
+pub struct VertexPosColTex
+{
+    pub location : Vec3,
+    pub color : Vec3,
+    pub tex_coord : Vec2,
+}
+
+impl VertexPosColTex 
+{
+    pub fn new(in_location: Vec3,in_color: Vec3, in_tex_coord: Vec2 ) -> VertexPosColTex
+    {
+        VertexPosColTex{location:in_location, color:in_color, tex_coord:in_tex_coord}
+    }
+}
+

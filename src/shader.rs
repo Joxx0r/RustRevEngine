@@ -22,11 +22,10 @@ impl Shader
 {
     pub fn new(vertexPath:&str, fragmentPath:&str) -> Result<Shader, Box<dyn Error>>
     {
-        
         println!("Serializing shader vs {} fs {} ",  vertexPath, fragmentPath);
         let mut shader = Shader { ID: 0 };
-        let vertexContent = utils::read_username_from_file(vertexPath)?;
-        let fragmentContent = utils::read_username_from_file(fragmentPath)?;
+        let vertexContent = utils::read_content_from_file(vertexPath)?;
+        let fragmentContent = utils::read_content_from_file(fragmentPath)?;
 
         let vShaderCode = CString::new(vertexContent.as_bytes()).unwrap();
         let fShaderCode = CString::new(fragmentContent.as_bytes()).unwrap();
