@@ -16,7 +16,7 @@ pub fn read_content_from_file(path:&str) -> Result<String, io::Error>
 
 const SRC_RESOURCE_PATH:&str = "../../resources/";
 
-pub fn read_resource_path(from_resource:&str) -> String
+pub fn modify_to_resource_path(from_resource:&str) -> String
 {
     let mut s = String::from(SRC_RESOURCE_PATH);
     s.push_str(from_resource);

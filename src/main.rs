@@ -28,10 +28,11 @@ mod rc;
 mod math;
 mod model;
 mod shader;
+mod rc_internal;
 /** END MODULES*/
 
 /** START TYPES USE*/
-use model::Model;
+use model::RevModel;
 use crate::types::RevColor;
 /** END TYPES USE*/
 /** INTERNAL*/
@@ -58,8 +59,14 @@ fn main()
  
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
-    let model: Model = unsafe {
-        Model::new()
+    let model: RevModel = unsafe {
+
+        // configure global opengl state
+        // -----------------------------
+        gl::Enable(gl::DEPTH_TEST);
+        // build and compile shaders
+        RevModel::new()
+        //RevModel::new_from_path(utils::modify_to_resource_path("models/nanosuit/nanosuit.obj").as_str())
     };
 
      while !window.should_close() {
@@ -68,19 +75,12 @@ fn main()
 
         unsafe {
             rc::clear_color_gl(RevColor::black());
-            gl::Clear(gl::COLOR_BUFFER_BIT);
+          
+            gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
             // bind textures on corresponding texture units
-            gl::ActiveTexture(gl::TEXTURE0);
-            gl::BindTexture(gl::TEXTURE_2D, model.m_texture_1);
-            gl::ActiveTexture(gl::TEXTURE1);
-            gl::BindTexture(gl::TEXTURE_2D, model.m_texture_2);
-
-
-            // render the triangle
-            model.m_shader.useProgram();
-            gl::BindVertexArray(model.m_vao);
-            gl::DrawElements(gl::TRIANGLES, 6, gl::UNSIGNED_INT, ptr::null());
+            model.Draw();
+    
         }
 
         window.swap_buffers();

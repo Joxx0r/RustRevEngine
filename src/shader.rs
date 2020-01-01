@@ -20,10 +20,15 @@ pub struct Shader {
 
 impl Shader
 {
+    pub fn default() -> Self {
+        Self {
+            ID : 0
+        }
+    }
+
     pub fn new(vertexPath:&str, fragmentPath:&str) -> Result<Shader, Box<dyn Error>>
     {
-        println!("Serializing shader vs {} fs {} ",  vertexPath, fragmentPath);
-        let mut shader = Shader { ID: 0 };
+        let mut shader = Shader::default();
         let vertexContent = utils::read_content_from_file(vertexPath)?;
         let fragmentContent = utils::read_content_from_file(fragmentPath)?;
 

@@ -83,14 +83,53 @@ pub struct VertexPosColTex
 {
     pub location : Vec3,
     pub color : Vec3,
-    pub tex_coord : Vec2,
+    pub texcoord : Vec2,
 }
 
 impl VertexPosColTex 
 {
-    pub fn new(in_location: Vec3,in_color: Vec3, in_tex_coord: Vec2 ) -> VertexPosColTex
-    {
-        VertexPosColTex{location:in_location, color:in_color, tex_coord:in_tex_coord}
+   fn default() -> Self {
+    Self {
+            location: Vec3::new_1(0.0),
+            color: Vec3::new_1(0.0),
+            texcoord: Vec2::new_1(0.0),
+        }
+    }
+
+    pub fn new(in_location: Vec3,in_color: Vec3, in_tex_coord: Vec2 ) -> Self {
+        VertexPosColTex{location:in_location, color:in_color, texcoord:in_tex_coord}
     }
 }
 
+pub struct VertexPosNormTexTanBi
+{
+    pub location : Vec3,
+    pub normal : Vec3,
+    pub texcoord : Vec2,
+    pub tangent : Vec3,
+    pub bitangent : Vec3,
+}
+
+impl VertexPosNormTexTanBi 
+{
+    fn default() -> Self {
+        Self {
+                location: Vec3::new_1(0.0),
+                normal: Vec3::new_1(0.0),
+                texcoord: Vec2::new_1(0.0),
+                tangent: Vec3::new_1(0.0),
+                bitangent: Vec3::new_1(0.0)
+            }
+       }
+        
+    pub fn new(in_location: Vec3,in_normal: Vec3, in_texcoord: Vec2, in_tangent:Vec3, in_bitangent:Vec3 ) -> Self
+    {
+        VertexPosNormTexTanBi{location:in_location, normal:in_normal, texcoord:in_texcoord, tangent:in_tangent, bitangent:in_bitangent }
+    }
+}
+#[derive(Clone)]
+pub struct RevTexture {
+    pub id: u32,
+    pub resource_name: String,
+    pub path: String,
+}
