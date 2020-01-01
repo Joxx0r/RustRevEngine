@@ -24,7 +24,11 @@ pub unsafe fn texture_from_file(path: &str) -> u32 {
     let mut textureID = 0;
     gl::GenTextures(1, &mut textureID);
 
-    let img = image::open(&Path::new(&filename)).expect("Texture failed to load");
+    let s = format!("failed loading texture {}", path);
+
+    println!("Trying to load path file {}", path);
+
+    let img = image::open(&Path::new(&filename)).expect(s.as_str());
     let format = match img {
         ImageLuma8(_) => gl::RED,
         ImageLumaA8(_) => gl::RG,

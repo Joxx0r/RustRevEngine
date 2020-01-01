@@ -6,6 +6,7 @@ use std::io;
 use std::io::Read;
 use std::fs::File;
 
+
 pub fn read_content_from_file(path:&str) -> Result<String, io::Error> 
 {
     let mut f = File::open(path)?;
