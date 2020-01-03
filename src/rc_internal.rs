@@ -21,8 +21,6 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
 
     let end_time = Instant::now();
     
-    println!("Loading texture file path: {} took (ms) {} ", path, end_time.saturating_duration_since(start_time).as_millis());
-
     println!("Loading texture: {} took (ms) {} ", path, end_time.saturating_duration_since(start_time).as_millis());
     texture
 }

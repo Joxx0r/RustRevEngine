@@ -8,7 +8,7 @@ extern crate glfw;
 use self::glfw::{Context, Key, Action};
 extern crate gl;
 
-use cgmath::{Matrix4, Vector3, vec3,  Deg, perspective, Point3};
+use cgmath::{Matrix4,   Deg, perspective, Point3};
 
 /** END */
 /** OPENGL*/
@@ -16,8 +16,7 @@ use cgmath::{Matrix4, Vector3, vec3,  Deg, perspective, Point3};
 /** STD */
 /** START */
 use std::sync::mpsc::Receiver;
-use std::ptr;
-use std::ffi::{CStr, CString};
+use std::ffi::{CStr};
 
 /** END */
 /** STD*/
@@ -40,6 +39,7 @@ use model::RevModel;
 use crate::types::RevColor;
 use crate::camera::Camera;
 use crate::camera::Camera_Movement::*;
+
 /** END TYPES USE*/
 /** INTERNAL*/
 
@@ -80,19 +80,18 @@ fn main()
         RevModel::new_from_path(utils::modify_to_resource_path("models/nanosuit/").as_str(), "nanosuit.obj")
     };
 
-    let mut deltaTime: f32; // time between current frame and last frame
-    let mut lastFrame: f32 = 0.0;
+    let mut delta_time: f32; // time between current frame and last frame
+    let mut last_frame: f32 = 0.0;
     
      while !window.should_close() {
 
-        let currentFrame = glfw.get_time() as f32;
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        let current_frame = glfw.get_time() as f32;
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
 
         process_events(&mut window, &events);
 
-        processInput(&mut window, deltaTime, &mut camera);
-
+        process_input(&mut window, delta_time, &mut camera);
         
         unsafe {
             rc::clear_color_gl(RevColor::black());
@@ -135,23 +134,23 @@ fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::Windo
     }
 }
 
-pub fn processInput(window: &mut glfw::Window, deltaTime: f32, camera: &mut Camera) {
+pub fn process_input(window: &mut glfw::Window, delta_time: f32, camera: &mut Camera) {
     
     if window.get_key(Key::Escape) == Action::Press {
         window.set_should_close(true)
     }
 
     if window.get_key(Key::W) == Action::Press {
-        camera.ProcessKeyboard(FORWARD, deltaTime);
+        camera.ProcessKeyboard(FORWARD, delta_time);
     }
     if window.get_key(Key::S) == Action::Press {
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
+        camera.ProcessKeyboard(BACKWARD, delta_time);
     }
     if window.get_key(Key::A) == Action::Press {
-        camera.ProcessKeyboard(LEFT, deltaTime);
+        camera.ProcessKeyboard(LEFT, delta_time);
     }
     if window.get_key(Key::D) == Action::Press {
-        camera.ProcessKeyboard( RIGHT, deltaTime);
+        camera.ProcessKeyboard( RIGHT, delta_time);
     }
 }
 

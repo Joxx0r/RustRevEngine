@@ -38,7 +38,6 @@ pub unsafe fn texture_from_file(path: &str) -> u32 {
     };
 
     let end_time = Instant::now();
-
     println!("Loading image FILE: {} took (ms) {} ", path, end_time.saturating_duration_since(start_time).as_millis());
 
     let data = img.raw_pixels();
