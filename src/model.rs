@@ -3,6 +3,8 @@
 
 extern crate glfw;
 extern crate gl;
+use self::glfw::{Context, Key, Action};
+
 
 use crate::types::*;
 use crate::shader::Shader;
@@ -16,6 +18,7 @@ use std::os::raw::c_void;
 use std::path::Path;
 use std::ffi::{CStr, CString};
 use std::mem::size_of;
+use std::time::{Duration, Instant};
 
 pub struct RevModel {
     pub m_meshes: Vec<RevMesh>,
@@ -50,6 +53,7 @@ impl RevModel
         // retr ieve the directory path of the filepath
         let mut model_instance = RevModel::default();
 
+        let start_time = Instant::now();
         model_instance.m_shader = Shader::new(	
             utils::modify_to_resource_path("shaders/shader.vs").as_str(),	
             utils::modify_to_resource_path("shaders/shader.fs").as_str(),	
@@ -113,8 +117,9 @@ impl RevModel
             }
             model_instance.m_meshes.push(RevMesh::new(vertices, indices, textures));
         }
-        
-    
+        let end_time =  Instant::now();
+        println!("load time context:loadtimeContext {} ms: {}", model_file.as_str(), end_time.saturating_duration_since(start_time).as_millis());
+
         model_instance
     }
 

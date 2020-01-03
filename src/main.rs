@@ -66,7 +66,7 @@ fn main()
     gl::load_with(|symbol| window.get_proc_address(symbol) as *const _);
 
     let mut camera = Camera {
-        Position: Point3::new(0.0, 0.0, 3.0),
+        Position: Point3::new(0.0, 0.0, 50.0),
         ..Camera::default()
     };
 

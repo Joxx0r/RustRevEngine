@@ -6,7 +6,6 @@ use std::io;
 use std::io::Read;
 use std::fs::File;
 
-
 pub fn read_content_from_file(path:&str) -> Result<String, io::Error> 
 {
     let mut f = File::open(path)?;
@@ -24,6 +23,18 @@ pub fn modify_to_resource_path(from_resource:&str) -> String
     s
 }
 
+pub fn try_remove_file_extension_from_file(from_resource:&str, extension:&str) -> String
+{
+    let s = String::from(from_resource);
+    let substr : String = match s.find(extension) {
+        Some(elem) => {
+            String::from(&s[..elem])
+        }
+        None => s
+    };
+    substr
+}
+
 /// Macro to get c strings from literals without runtime overhead
 /// Literal must not contain any interior nul bytes!
 macro_rules! c_str {
@@ -39,3 +50,4 @@ macro_rules! offset_of {
         &(*(ptr::null() as *const $ty)).$field as *const _ as usize
     }
 }
+
