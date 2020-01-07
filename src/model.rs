@@ -3,7 +3,6 @@
 
 extern crate glfw;
 extern crate gl;
-use self::glfw::{Context, Key, Action};
 
 
 use crate::types::*;
@@ -12,13 +11,12 @@ use crate::math::*;
 use crate::rc_internal;
 use crate::utils;
 
-use image;
 use std::ptr;
 use std::os::raw::c_void;
 use std::path::Path;
-use std::ffi::{CStr, CString};
+use std::ffi::{CString};
+use std::time::{Instant};
 use std::mem::size_of;
-use std::time::{Duration, Instant};
 
 pub struct RevModel {
     pub m_meshes: Vec<RevMesh>,
@@ -41,7 +39,7 @@ impl RevModel
 {
     pub fn default() -> Self
     {
-        Self {
+        RevModel {
             m_meshes : Vec::new(),
             m_textures : Vec::new(),
             m_shader : Shader::default(),
@@ -123,9 +121,9 @@ impl RevModel
         model_instance
     }
 
-    pub fn Draw(&self) {
+    pub fn draw(&self) {
         for mesh in &self.m_meshes {
-            unsafe { mesh.Draw(&self.m_shader); }
+            mesh.draw(&self.m_shader);
         }
     }
 }
@@ -134,7 +132,7 @@ impl RevMesh
 {
     pub fn default() -> Self
     {
-        Self 
+        RevMesh 
         {
             m_verts : Vec::new(),
             m_indicies : Vec::new(),
@@ -149,7 +147,7 @@ impl RevMesh
 
     pub fn new(verts:Vec<VertexPosNormTexTanBi>, indicies:Vec<u32>, textures:Vec<RevTexture>) -> Self
     {
-        let mut m = Self
+        let mut m = RevMesh
         {
             m_verts : verts,
             m_indicies : indicies,
@@ -157,11 +155,11 @@ impl RevMesh
             ..RevMesh::default()
         };
 
-        m.SetupMesh();
+        m.setup_mesh();
         m
     }
 
-    fn SetupMesh(&mut self)
+    fn setup_mesh(&mut self)
     {
         unsafe
         {
@@ -206,35 +204,35 @@ impl RevMesh
         }
     }
 
-    pub fn Draw(&self, shader:&Shader)
+    pub fn draw(&self, shader:&Shader)
     {
         unsafe
         {
             // bind appropriate textures
-            let mut diffuseNr  = 0;
-            let mut specularNr = 0;
-            let mut normalNr   = 0;
-            let mut heightNr   = 0;
+            let mut diffuse_nr  = 0;
+            let mut specular_nr = 0;
+            let mut normal_nr   = 0;
+            let mut height_nr   = 0;
             for (i, texture) in self.m_textures.iter().enumerate() {
                 gl::ActiveTexture(gl::TEXTURE0 + i as u32); // active proper texture unit before binding
                 // retrieve texture number (the N in diffuse_textureN)
                 let name = &texture.resource_name;
                 let number = match name.as_str() {
                     "texture_diffuse" => {
-                        diffuseNr += 1;
-                        diffuseNr
+                        diffuse_nr += 1;
+                        diffuse_nr
                     },
                     "texture_specular" => {
-                        specularNr += 1;
-                        specularNr
+                        specular_nr += 1;
+                        specular_nr
                     }
                     "texture_normal" => {
-                        normalNr += 1;
-                        normalNr
+                        normal_nr += 1;
+                        normal_nr
                     }
                     "texture_height" => {
-                        heightNr += 1;
-                        heightNr
+                        height_nr += 1;
+                        height_nr
                     }
                     _ => panic!("unknown texture type")
                 };

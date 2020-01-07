@@ -23,6 +23,7 @@ pub fn modify_to_resource_path(from_resource:&str) -> String
     s
 }
 
+#[allow(dead_code)]
 pub fn try_remove_file_extension_from_file(from_resource:&str, extension:&str) -> String
 {
     let s = String::from(from_resource);

@@ -1,4 +1,6 @@
 
+#[allow(dead_code)]
+
 use std::error::Error;
 use std::fmt;
 
@@ -79,6 +81,7 @@ impl fmt::Display for RevError
     }
 }
 
+#[allow(dead_code)]
 pub struct VertexPosColTex
 {
     pub location : Vec3,
@@ -86,6 +89,7 @@ pub struct VertexPosColTex
     pub texcoord : Vec2,
 }
 
+#[allow(dead_code)]
 impl VertexPosColTex 
 {
    fn default() -> Self {
@@ -110,6 +114,7 @@ pub struct VertexPosNormTexTanBi
     pub bitangent : Vec3,
 }
 
+#[allow(dead_code)]
 impl VertexPosNormTexTanBi 
 {
     fn default() -> Self {

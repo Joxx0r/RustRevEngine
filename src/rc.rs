@@ -6,12 +6,9 @@ use std::os::raw::c_void;
 use image;
 use image::DynamicImage::*;
 use image::GenericImage;
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
-use std::slice;
 use std::path::Path;
-
-use crate::utils;
 
 pub fn clear_color_gl(color:RevColor)
 {
@@ -26,8 +23,8 @@ pub unsafe fn texture_from_file(path: &str) -> u32 {
     let filename = path;
 
     let start_time = Instant::now();
-    let mut textureID = 0;
-    gl::GenTextures(1, &mut textureID);
+    let mut texture_id = 0;
+    gl::GenTextures(1, &mut texture_id);
     
     let img = image::open(&Path::new(&filename)).expect(format!("Failed loading texture {}", path).as_str());
     let format = match img {
@@ -42,7 +39,7 @@ pub unsafe fn texture_from_file(path: &str) -> u32 {
 
     let data = img.raw_pixels();
 
-    gl::BindTexture(gl::TEXTURE_2D, textureID);
+    gl::BindTexture(gl::TEXTURE_2D, texture_id);
     gl::TexImage2D(gl::TEXTURE_2D, 0, format as i32, img.width() as i32, img.height() as i32,
         0, format, gl::UNSIGNED_BYTE, &data[0] as *const u8 as *const c_void);
     gl::GenerateMipmap(gl::TEXTURE_2D);
@@ -54,6 +51,6 @@ pub unsafe fn texture_from_file(path: &str) -> u32 {
 
     let start_time = Instant::now();
     println!("Loading image GL: {} took (ms) {} ", path, start_time.saturating_duration_since(end_time).as_millis());
-    textureID
+    texture_id
 }
 

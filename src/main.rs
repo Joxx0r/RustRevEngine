@@ -98,18 +98,18 @@ fn main()
             
             gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-            model.m_shader.useProgram();
+            model.m_shader.use_program();
 
             // pass projection matrix to shader (note that in this case it could change every frame)
             let projection: Matrix4<f32> = perspective(Deg(camera.Zoom), startup_settings.window_width as f32 / startup_settings.window_height as f32 , 0.1, 100.0);
-            model.m_shader.setMat4(c_str!("projection"), &projection);
+            model.m_shader.set_mat_4(c_str!("projection"), &projection);
 
             // camera/view transformation
             let view = camera.GetViewMatrix();
-            model.m_shader.setMat4(c_str!("view"), &view);
+            model.m_shader.set_mat_4(c_str!("view"), &view);
 
             // bind textures on corresponding texture units
-            model.Draw();
+            model.draw();
     
         }
 

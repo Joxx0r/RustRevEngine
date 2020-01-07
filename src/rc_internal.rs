@@ -1,8 +1,7 @@
 
 use crate::rc;
 use crate::types::*;
-use crate::utils;
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
 pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str, type_name: &str) -> RevTexture {
    
