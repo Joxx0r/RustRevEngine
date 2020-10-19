@@ -11,9 +11,14 @@ use crate::math::*;
 use crate::rc_internal;
 use crate::utils;
 
+
+use std::fs::File;
+use std::io::prelude::*;
+use std::path::Path;
+
+
 use std::ptr;
 use std::os::raw::c_void;
-use std::path::Path;
 use std::ffi::{CString};
 use std::time::{Instant};
 use std::mem::size_of;
@@ -117,8 +122,25 @@ impl RevModel
         }
         let end_time =  Instant::now();
         println!("load time context:loadtimeContext {} ms: {}", model_file.as_str(), end_time.saturating_duration_since(start_time).as_millis());
-
         model_instance
+    }
+
+    pub fn save_to_file(&self, base_path:&str, model_path:&str) {
+        let mut save_path:String = String::from(base_path);
+        save_path.push_str(model_path);
+        save_path.push_str(".revmodel");
+        // Open a file in write-only mode, returns `io::Result<File>`
+        let mut file = match File::create(&save_path) {
+            Err(why) => panic!("couldn't create {}: {}", save_path, why),
+            Ok(file) => file,
+        };
+
+        let test = String::from("test");
+        // Write the `LOREM_IPSUM` string to `file`, returns `io::Result<()>`
+        match file.write_all(test.as_bytes()) {
+            Err(why) => panic!("couldn't write to {}: {}", save_path, why),
+            Ok(_) => println!("successfully wrote to {}", save_path),
+        }
     }
 
     pub fn draw(&self) {
