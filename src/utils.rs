@@ -14,7 +14,7 @@ pub fn read_content_from_file(path:&str) -> Result<String, io::Error>
     Ok(s)
 }
 
-const SRC_RESOURCE_PATH:&str = "../../resources/";
+const SRC_RESOURCE_PATH:&str = "resources/";
 
 pub fn modify_to_resource_path(from_resource:&str) -> String
 {
