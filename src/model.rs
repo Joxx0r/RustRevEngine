@@ -22,6 +22,7 @@ use std::os::raw::c_void;
 use std::ffi::{CString};
 use std::time::{Instant};
 use std::mem::size_of;
+use std::str::Chars;
 
 pub struct RevModel {
     pub m_meshes: Vec<RevMesh>,
@@ -49,6 +50,10 @@ impl RevModel
             m_textures : Vec::new(),
             m_shader : Shader::default(),
         }
+    }
+
+    pub fn get_slice<'a>(start: &'a str, end: &Chars) -> &'a str {
+        &start[..start.len() - end.as_str().len()]
     }
 
     pub fn new_from_path(base_path:&str, model_name:&str) -> Self
@@ -92,27 +97,30 @@ impl RevModel
             if let Some(material_id) = mesh.material_id {
                 let material = &materials[material_id];
 
-    
                 // 1. diffuse map
                 if !material.diffuse_texture.is_empty() {
                     let texture = 
                     rc_internal::load_material_texture(
                         &mut model_instance.m_textures,
-                        format!("{}{}", base_path, material.diffuse_texture).as_str(), 
+                        format!("{}{}", base_path, material.diffuse_texture).as_str(),
+                        material.diffuse_texture.as_str(),
                         "texture_diffuse");
                     textures.push(texture);
                 }
                 // 2. specular map
                 if !material.specular_texture.is_empty() {
                     let texture = rc_internal::load_material_texture(&mut model_instance.m_textures, 
-                        format!("{}{}", base_path,  material.specular_texture).as_str(), "texture_specular");
+                        format!("{}{}", base_path, material.specular_texture).as_str(),
+                        material.specular_texture.as_str(),
+                         "texture_specular");
                     textures.push(texture);
                 }
                 // 3. normal map
                 if !material.normal_texture.is_empty() {
                     let texture = rc_internal::load_material_texture(
                         &mut model_instance.m_textures, 
-                        format!("{}{}", base_path,  material.normal_texture).as_str(), 
+                        format!("{}{}", base_path,  material.normal_texture).as_str(),
+                        material.normal_texture.as_str(),
                         "texture_normal");
                     textures.push(texture);
                 }
@@ -126,20 +134,31 @@ impl RevModel
     }
 
     pub fn save_to_file(&self, base_path:&str, model_path:&str) {
-        let mut save_path:String = String::from(base_path);
-        save_path.push_str(model_path);
-        save_path.push_str(".revmodel");
-        // Open a file in write-only mode, returns `io::Result<File>`
-        let mut file = match File::create(&save_path) {
-            Err(why) => panic!("couldn't create {}: {}", save_path, why),
-            Ok(file) => file,
-        };
+        for texture in &self.m_textures {
+            if texture.base_tex_id.is_empty() {
+                println!("Will not save texture of resource {} path {} as empty", texture.resource_name, texture.path);
+                continue
+            }
+            let mut save_path: String = String::from(base_path);
+            save_path.push_str(model_path);
+            save_path.push_str("_");
+            save_path.push_str(texture.base_tex_id.as_str() );
+            save_path.push_str(".revtexture");
+            // Open a file in write-only mode, returns `io::Result<File>`
+            let mut file = match File::create(&save_path) {
+                Err(why) => panic!("couldn't create {}: {}", save_path, why),
+                Ok(file) => file,
+            };
 
-        let test = String::from("test");
-        // Write the `LOREM_IPSUM` string to `file`, returns `io::Result<()>`
-        match file.write_all(test.as_bytes()) {
-            Err(why) => panic!("couldn't write to {}: {}", save_path, why),
-            Ok(_) => println!("successfully wrote to {}", save_path),
+            let b = &texture.raw_data; // b: &Vec<u8>
+            let c: &[u8] = &texture.raw_data;; // c: &[u8]
+
+            let test = String::from("test");
+            // Write the `LOREM_IPSUM` string to `file`, returns `io::Result<()>`
+            match file.write_all(c) {
+                Err(why) => panic!("couldn't write to {}: {}", save_path, why),
+                Ok(_) => println!("successfully wrote to {}", save_path),
+            }
         }
     }
 

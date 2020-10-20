@@ -137,4 +137,6 @@ pub struct RevTexture {
     pub id: u32,
     pub resource_name: String,
     pub path: String,
+    pub raw_data: Vec<u8>,
+    pub base_tex_id: String,
 }

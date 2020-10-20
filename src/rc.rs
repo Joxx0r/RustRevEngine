@@ -19,7 +19,7 @@ pub fn clear_color_gl(color:RevColor)
 }
 
 
-pub unsafe fn texture_from_file(path: &str) -> u32 {
+pub unsafe fn texture_from_file(path: &str) -> (u32, Vec<u8>) {
     let filename = path;
 
     let start_time = Instant::now();
@@ -51,6 +51,6 @@ pub unsafe fn texture_from_file(path: &str) -> u32 {
 
     let start_time = Instant::now();
     println!("Loading image GL: {} took (ms) {} ", path, start_time.saturating_duration_since(end_time).as_millis());
-    texture_id
+    (texture_id, data)
 }
 
