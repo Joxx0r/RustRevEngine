@@ -103,7 +103,7 @@ impl RevModel
                     rc_internal::load_material_texture(
                         &mut model_instance.m_textures,
                         format!("{}{}", base_path, material.diffuse_texture).as_str(),
-                        material.diffuse_texture.as_str(),
+                        utils::try_remove_file_extension_from_file(material.diffuse_texture.as_str(), ".").as_str(),
                         "texture_diffuse");
                     textures.push(texture);
                 }
@@ -111,7 +111,7 @@ impl RevModel
                 if !material.specular_texture.is_empty() {
                     let texture = rc_internal::load_material_texture(&mut model_instance.m_textures, 
                         format!("{}{}", base_path, material.specular_texture).as_str(),
-                        material.specular_texture.as_str(),
+                     utils::try_remove_file_extension_from_file(material.specular_texture.as_str(), ".").as_str(),
                          "texture_specular");
                     textures.push(texture);
                 }
@@ -120,7 +120,7 @@ impl RevModel
                     let texture = rc_internal::load_material_texture(
                         &mut model_instance.m_textures, 
                         format!("{}{}", base_path,  material.normal_texture).as_str(),
-                        material.normal_texture.as_str(),
+                        utils::try_remove_file_extension_from_file(material.normal_texture.as_str(), ".").as_str(),
                         "texture_normal");
                     textures.push(texture);
                 }
@@ -133,29 +133,27 @@ impl RevModel
         model_instance
     }
 
+
     pub fn save_to_file(&self, base_path:&str, model_path:&str) {
         for texture in &self.m_textures {
             if texture.base_tex_id.is_empty() {
                 println!("Will not save texture of resource {} path {} as empty", texture.resource_name, texture.path);
                 continue
             }
+
+            //build texture path
             let mut save_path: String = String::from(base_path);
             save_path.push_str(model_path);
             save_path.push_str("_");
             save_path.push_str(texture.base_tex_id.as_str() );
             save_path.push_str(".revtexture");
+
             // Open a file in write-only mode, returns `io::Result<File>`
             let mut file = match File::create(&save_path) {
                 Err(why) => panic!("couldn't create {}: {}", save_path, why),
                 Ok(file) => file,
             };
-
-            let b = &texture.raw_data; // b: &Vec<u8>
-            let c: &[u8] = &texture.raw_data;; // c: &[u8]
-
-            let test = String::from("test");
-            // Write the `LOREM_IPSUM` string to `file`, returns `io::Result<()>`
-            match file.write_all(c) {
+            match file.write_all( &texture.raw_data) {
                 Err(why) => panic!("couldn't write to {}: {}", save_path, why),
                 Ok(_) => println!("successfully wrote to {}", save_path),
             }
