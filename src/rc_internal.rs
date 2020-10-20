@@ -11,13 +11,12 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
         return texture.clone();
     }
 
-    let textureLoadResult =  unsafe { rc::texture_from_file(path) };
-
+    let texture_load_result =  unsafe { rc::texture_from_file(path) };
     let texture = RevTexture {
-        id: textureLoadResult.0,
+        id: texture_load_result.0,
         resource_name: type_name.into(),
         path: path.into(),
-        raw_data: textureLoadResult.1,
+        raw_data: texture_load_result.1,
         base_tex_id: tex_id.into(),
     };
     exisiting_textures.push(texture.clone());
