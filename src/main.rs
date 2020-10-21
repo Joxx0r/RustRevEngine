@@ -81,7 +81,7 @@ fn main()
     };
 
 
-    model.save_to_file(utils::modify_to_resource_path("models/nanosuit/").as_str(), "nanosuit");
+   // model.save_to_file(utils::modify_to_resource_path("models/nanosuit/").as_str(), "nanosuit");
 
     let mut delta_time: f32; // time between current frame and last frame
     let mut last_frame: f32 = 0.0;

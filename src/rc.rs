@@ -18,11 +18,14 @@ pub fn clear_color_gl(color:RevColor)
     }
 }
 
-pub unsafe fn texture_from_file(path: &str) -> (u32, Vec<u8>, i32, i32, i32) {
-    let filename = path;
-    let mut texture_id = 0;
-    gl::GenTextures(1, &mut texture_id);
+pub unsafe fn generate_id() -> (u32) {
+    let mut id = 0;
+    gl::GenTextures(1, &mut id);
+    id
+}
 
+pub unsafe fn texture_from_file(path: &str) -> (Vec<u8>, i32, i32, i32) {
+    let filename = path;
     let img = image::open(&Path::new(&filename)).expect(format!("Failed loading texture {}", path).as_str());
     let format = match img {
         ImageLuma8(_) => gl::RED,
@@ -33,7 +36,7 @@ pub unsafe fn texture_from_file(path: &str) -> (u32, Vec<u8>, i32, i32, i32) {
 
     let end_time = Instant::now();
     let data = img.raw_pixels();
-    (texture_id, data, format as i32, img.width() as i32, img.height() as i32)
+    (data, format as i32, img.width() as i32, img.height() as i32)
 }
 
 pub unsafe fn texture_to_gl(texture:&RevTexture ) {

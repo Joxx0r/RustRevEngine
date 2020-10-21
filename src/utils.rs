@@ -6,6 +6,8 @@ use std::io;
 use std::io::Read;
 use std::fs::File;
 
+use std::path::Path;
+
 pub fn read_content_from_file(path:&str) -> Result<String, io::Error> 
 {
     let mut f = File::open(path)?;
@@ -34,6 +36,11 @@ pub fn try_remove_file_extension_from_file(from_resource:&str, extension:&str) -
         None => s
     };
     substr
+}
+
+pub fn file_exists(path:&str) -> bool
+{
+    Path::new(path).exists()
 }
 
 /// Macro to get c strings from literals without runtime overhead

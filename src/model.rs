@@ -139,8 +139,6 @@ impl RevModel
 
             //build texture path
             let mut save_path: String = String::from(base_path);
-            save_path.push_str(model_path);
-            save_path.push_str("_");
             save_path.push_str(texture.base_tex_id.as_str() );
             save_path.push_str(".revtexture");
 

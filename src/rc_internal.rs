@@ -1,7 +1,8 @@
 
-use crate::rc;
+use crate::{rc, utils};
 use crate::types::*;
 use std::time::{Instant};
+use std::fs;
 
 pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str, tex_id: &str, type_name: &str) -> RevTexture {
 
@@ -11,19 +12,35 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
         return texture.clone();
     }
 
-    let texture_load_result =  unsafe {
-        rc::texture_from_file(path)
+    let mut texture = RevTexture::default();
+    let mut modified_path = utils::try_remove_file_extension_from_file(path, ".");
+    modified_path.push_str(".revtexture");
+    let texture_id = unsafe {
+            rc::generate_id()
     };
-    let texture = RevTexture {
-        id: texture_load_result.0,
-        format: texture_load_result.2,
-        width: texture_load_result.3,
-        height: texture_load_result.4,
-        resource_name: type_name.into(),
-        path: path.into(),
-        raw_data: texture_load_result.1,
-        base_tex_id: tex_id.into(),
-    };
+    if utils::file_exists(modified_path.as_str())
+    {
+        let binary_data = fs::read(&modified_path).expect("unable to read metadata");
+        texture = bincode::deserialize(&binary_data).unwrap();
+        texture.id = texture_id;
+    }
+    else
+    {
+        let texture_load_result =  unsafe {
+            rc::texture_from_file(path)
+        };
+
+        texture = RevTexture {
+            id: texture_id,
+            format: texture_load_result.1,
+            width: texture_load_result.2,
+            height: texture_load_result.3,
+            resource_name: type_name.into(),
+            path: path.into(),
+            raw_data: texture_load_result.0,
+            base_tex_id: tex_id.into(),
+        };
+    }
 
     unsafe {
         rc::texture_to_gl(&texture);
@@ -31,7 +48,6 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
 
     exisiting_textures.push(texture.clone());
     let end_time = Instant::now();
-    
     println!("Loading texture: {} took (ms) {} ", path, end_time.saturating_duration_since(start_time).as_millis());
     texture
 }

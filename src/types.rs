@@ -145,3 +145,21 @@ pub struct RevTexture {
     pub raw_data: Vec<u8>,
     pub base_tex_id: String,
 }
+
+impl RevTexture
+{
+    pub fn default() -> Self
+    {
+        RevTexture {
+            id : 0,
+            format : 0,
+            width : 0,
+            height : 0,
+            resource_name : String::new(),
+            path : String::new(),
+            raw_data: Vec::new(),
+            base_tex_id: String::new()
+        }
+    }
+
+}
