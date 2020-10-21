@@ -24,6 +24,7 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
         raw_data: texture_load_result.1,
         base_tex_id: tex_id.into(),
     };
+
     unsafe {
         rc::texture_to_gl(&texture);
     }

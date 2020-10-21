@@ -5,6 +5,7 @@ use std::error::Error;
 use std::fmt;
 
 use crate::math::*;
+use serde::{Serialize, Deserialize};
 
 pub struct RevColor
 {
@@ -132,7 +133,8 @@ impl VertexPosNormTexTanBi
         VertexPosNormTexTanBi{location:in_location, normal:in_normal, texcoord:in_texcoord, tangent:in_tangent, bitangent:in_bitangent }
     }
 }
-#[derive(Clone)]
+
+#[derive(Clone, Serialize, Deserialize)]
 pub struct RevTexture {
     pub id: u32,
     pub format: i32,

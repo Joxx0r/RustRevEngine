@@ -18,11 +18,8 @@ pub fn clear_color_gl(color:RevColor)
     }
 }
 
-
 pub unsafe fn texture_from_file(path: &str) -> (u32, Vec<u8>, i32, i32, i32) {
     let filename = path;
-
-    let start_time = Instant::now();
     let mut texture_id = 0;
     gl::GenTextures(1, &mut texture_id);
 
@@ -35,11 +32,7 @@ pub unsafe fn texture_from_file(path: &str) -> (u32, Vec<u8>, i32, i32, i32) {
     };
 
     let end_time = Instant::now();
-
     let data = img.raw_pixels();
-
-    let start_time = Instant::now();
-    println!("Loading image GL: {} took (ms) {} ", path, start_time.saturating_duration_since(end_time).as_millis());
     (texture_id, data, format as i32, img.width() as i32, img.height() as i32)
 }
 

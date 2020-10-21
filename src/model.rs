@@ -149,7 +149,9 @@ impl RevModel
                 Err(why) => panic!("couldn't create {}: {}", save_path, why),
                 Ok(file) => file,
             };
-            match file.write_all( &texture.raw_data) {
+
+            let v =  bincode::serialize(&texture).unwrap();
+            match file.write_all( &v) {
                 Err(why) => panic!("couldn't write to {}: {}", save_path, why),
                 Ok(_) => println!("successfully wrote to {}", save_path),
             }
