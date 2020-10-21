@@ -11,16 +11,24 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
         return texture.clone();
     }
 
-    let texture_load_result =  unsafe { rc::texture_from_file(path) };
+    let texture_load_result =  unsafe {
+        rc::texture_from_file(path)
+    };
     let texture = RevTexture {
         id: texture_load_result.0,
+        format: texture_load_result.2,
+        width: texture_load_result.3,
+        height: texture_load_result.4,
         resource_name: type_name.into(),
         path: path.into(),
         raw_data: texture_load_result.1,
         base_tex_id: tex_id.into(),
     };
-    exisiting_textures.push(texture.clone());
+    unsafe {
+        rc::texture_to_gl(&texture);
+    }
 
+    exisiting_textures.push(texture.clone());
     let end_time = Instant::now();
     
     println!("Loading texture: {} took (ms) {} ", path, end_time.saturating_duration_since(start_time).as_millis());

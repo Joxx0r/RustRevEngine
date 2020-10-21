@@ -52,10 +52,6 @@ impl RevModel
         }
     }
 
-    pub fn get_slice<'a>(start: &'a str, end: &Chars) -> &'a str {
-        &start[..start.len() - end.as_str().len()]
-    }
-
     pub fn new_from_path(base_path:&str, model_name:&str) -> Self
     {   
         // retr ieve the directory path of the filepath

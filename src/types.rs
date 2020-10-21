@@ -135,6 +135,9 @@ impl VertexPosNormTexTanBi
 #[derive(Clone)]
 pub struct RevTexture {
     pub id: u32,
+    pub format: i32,
+    pub width: i32,
+    pub height: i32,
     pub resource_name: String,
     pub path: String,
     pub raw_data: Vec<u8>,
