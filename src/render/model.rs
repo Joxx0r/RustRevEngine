@@ -4,16 +4,9 @@
 extern crate glfw;
 extern crate gl;
 
-use crate::shader::Shader;
-use crate::math::*;
-use crate::rc_internal;
-use crate::utils;
-
-
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
-
 
 use std::ptr;
 use std::os::raw::c_void;
@@ -21,7 +14,12 @@ use std::ffi::{CString};
 use std::time::{Instant};
 use std::mem::size_of;
 use std::str::Chars;
+
 use crate::core::types::{RevTexture, VertexPosNormTexTanBi};
+use crate::render::shader::Shader;
+use crate::math::vec::{Vec3, Vec2};
+use crate::utils;
+use crate::render::rc_internal;
 
 pub struct RevModel {
     pub m_meshes: Vec<RevMesh>,

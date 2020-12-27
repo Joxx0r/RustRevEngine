@@ -4,7 +4,7 @@
 use std::error::Error;
 use std::fmt;
 
-use crate::math::*;
+use crate::math::vec::*;
 use serde::{Serialize, Deserialize};
 
 pub struct RevColor

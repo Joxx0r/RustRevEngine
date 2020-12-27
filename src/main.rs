@@ -25,22 +25,20 @@ use std::ffi::{CStr};
 
 /** START MODULES */
 mod utils;
-mod rc;
 mod math;
-mod model;
-mod shader;
-mod rc_internal;
-mod camera;
+mod render;
 mod core;
+mod misc;
 
 /** END MODULES*/
 
 /** START TYPES USE*/
-use model::RevModel;
 use crate::types::RevColor;
-use crate::camera::Camera;
-use crate::camera::Camera_Movement::*;
+use crate::misc::camera::Camera_Movement::*;
 use crate::core::types;
+use render::rc;
+use crate::render::model::RevModel;
+use crate::misc::camera::Camera;
 
 /** END TYPES USE*/
 /** INTERNAL*/
@@ -87,7 +85,8 @@ fn main()
 
     let mut delta_time: f32; // time between current frame and last frame
     let mut last_frame: f32 = 0.0;
-    
+
+
      while !window.should_close() {
 
         let current_frame = glfw.get_time() as f32;
