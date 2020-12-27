@@ -23,7 +23,7 @@ pub fn load_material_texture(exisiting_textures:&mut Vec<RevTexture>, path: &str
     if utils::file_exists(modified_path.as_str())
     {
         let binary_data = fs::read(&modified_path).expect("unable to read metadata");
-        texture = bincode::deserialize(&binary_data).unwrap();
+        texture = bincode2::deserialize(&binary_data).unwrap();
         texture.id = texture_id;
     }
     else

@@ -144,7 +144,7 @@ impl RevModel
                 Ok(file) => file,
             };
 
-            let v =  bincode::serialize(&texture).unwrap();
+            let v =  bincode2::serialize(&texture).unwrap();
             match file.write_all( &v) {
                 Err(why) => panic!("couldn't write to {}: {}", save_path, why),
                 Ok(_) => println!("successfully wrote to {}", save_path),
