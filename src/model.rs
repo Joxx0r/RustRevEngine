@@ -4,8 +4,6 @@
 extern crate glfw;
 extern crate gl;
 
-
-use crate::types::*;
 use crate::shader::Shader;
 use crate::math::*;
 use crate::rc_internal;
@@ -23,6 +21,7 @@ use std::ffi::{CString};
 use std::time::{Instant};
 use std::mem::size_of;
 use std::str::Chars;
+use crate::core::types::{RevTexture, VertexPosNormTexTanBi};
 
 pub struct RevModel {
     pub m_meshes: Vec<RevMesh>,
@@ -66,7 +65,6 @@ impl RevModel
         }); 
 
         let model_file = format!("{}{}", base_path, model_name);
-         
         let path = Path::new(model_file.as_str());
         let obj = tobj::load_obj(path);
 
@@ -81,8 +79,7 @@ impl RevModel
 
             let (p, n, t) = (&mesh.positions, &mesh.normals, &mesh.texcoords);
             for i in 0..num_vertices {
-                vertices.push(
-                VertexPosNormTexTanBi::new(
+                vertices.push(VertexPosNormTexTanBi::new(
                     Vec3::new_3(p[i*3], p[i*3+1], p[i*3+2]),  
                     Vec3::new_3(n[i*3], n[i*3+1], n[i*3+2]), 
                     Vec2::new_2(t[i*2], t[i*2+1]), Vec3::zero(), Vec3::zero())); 
@@ -124,6 +121,7 @@ impl RevModel
             }
             model_instance.m_meshes.push(RevMesh::new(vertices, indices, textures));
         }
+
         let end_time =  Instant::now();
         println!("load time context:loadtimeContext {} ms: {}", model_file.as_str(), end_time.saturating_duration_since(start_time).as_millis());
         model_instance

@@ -24,7 +24,6 @@ use std::ffi::{CStr};
 /** INTERNAL */
 
 /** START MODULES */
-mod types;
 mod utils;
 mod rc;
 mod math;
@@ -32,6 +31,8 @@ mod model;
 mod shader;
 mod rc_internal;
 mod camera;
+mod core;
+
 /** END MODULES*/
 
 /** START TYPES USE*/
@@ -39,6 +40,7 @@ use model::RevModel;
 use crate::types::RevColor;
 use crate::camera::Camera;
 use crate::camera::Camera_Movement::*;
+use crate::core::types;
 
 /** END TYPES USE*/
 /** INTERNAL*/
