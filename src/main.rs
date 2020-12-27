@@ -40,6 +40,8 @@ use render::rc;
 use crate::render::model::RevModel;
 use crate::misc::camera::Camera;
 use glfw::MouseButton;
+use misc::input::input_state;
+use crate::math::vec::Vec2;
 
 /** END TYPES USE*/
 /** INTERNAL*/
@@ -96,9 +98,10 @@ fn main()
 
         process_events(&mut window, &events);
 
+         let current_frame_input_state : input_state = misc::input::calculate_input(&mut window);
          unsafe
          {
-             process_input(&mut window, delta_time, &mut camera);
+             misc::input::process_input(&mut window, delta_time, &mut camera, current_frame_input_state);
          }
         unsafe {
             rc::clear_color_gl(RevColor::black());
@@ -119,7 +122,6 @@ fn main()
             model.draw();
     
         }
-
         window.swap_buffers();
         glfw.poll_events();
     }
@@ -140,37 +142,3 @@ fn process_events(window: &mut glfw::Window, events: &Receiver<(f64, glfw::Windo
         }
     }
 }
-
-pub unsafe fn process_input(window: &mut glfw::Window, delta_time: f32, camera: &mut Camera) {
-    if window.get_key(Key::Escape) == Action::Press {
-        window.set_should_close(true)
-    }
-
-    if window.get_key(Key::W) == Action::Press {
-        camera.ProcessKeyboard(FORWARD, delta_time);
-    }
-    if window.get_key(Key::S) == Action::Press {
-        camera.ProcessKeyboard(BACKWARD, delta_time);
-    }
-    if window.get_key(Key::A) == Action::Press {
-        camera.ProcessKeyboard(LEFT, delta_time);
-    }
-    if window.get_key(Key::D) == Action::Press {
-        camera.ProcessKeyboard( RIGHT, delta_time);
-    }
-
-    static mut prev_frame_mouse_button_down: bool = false;
-    static mut old_mouse_position:(f64, f64) = (0.0, 0.0);
-    let mut current_mouse_position:(f64, f64) = window.get_cursor_pos();
-    let mouse_down_now = window.get_mouse_button(MouseButton::Button1) == Action::Press;
-    if(mouse_down_now) {
-        if(prev_frame_mouse_button_down) {
-            let delta = (current_mouse_position.0  - old_mouse_position.0, -1.0 * (current_mouse_position.1 - old_mouse_position.1));
-            camera.ProcessMouseMovement(delta.0 as f32, delta.1 as f32, true);
-        }
-        old_mouse_position = current_mouse_position;
-    }
-
-    prev_frame_mouse_button_down = mouse_down_now;
-}
-

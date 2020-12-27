@@ -9,20 +9,26 @@ pub struct Vec2 {
 }
 
 impl Vec2 {
-    pub fn default() -> Self{  
+    pub const fn default() -> Self{
         Vec2::new_1(0.0)
     }
-    pub fn zero() -> Self{  
+    pub const fn zero() -> Self{
         Vec2::new_1(0.0)
     }
-    pub fn new() -> Vec2{  
+    pub const fn new() -> Vec2 {
         Vec2{x:0.0, y:0.0 }
     }
-    pub fn new_1(in_s:f32) -> Vec2 {   
+    pub const fn new_1(in_s:f32) -> Vec2 {
         Vec2{x:in_s, y:in_s}
     }   
-    pub fn new_2(in_x:f32, in_y:f32) -> Vec2 {   
+    pub const fn new_2(in_x:f32, in_y:f32) -> Vec2 {
         Vec2{x:in_x, y:in_y }
+    }
+    pub const fn new_tuple_f32(in_t:(f32, f32)) -> Vec2 {
+        Vec2{x:in_t.0, y:in_t.1 }
+    }
+    pub const fn new_tuple_f64(in_t:(f64, f64)) -> Vec2 {
+        Vec2{x: in_t.0 as f32, y: in_t.1 as f32 }
     }
 }
 
